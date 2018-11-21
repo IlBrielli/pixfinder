@@ -59,11 +59,20 @@ function find(options) {
 // (Object) -> Array
 function findAll(options) {
     var opt = _default(options),
-        canv = util.canvas.wrap(opt.img),
+        imgData = options.imageData
         objectPts, objects;
 
+    if (!imgData) {
+      var canv = util.canvas.wrap(opt.img)
+      imgData = {
+        width: canv.width,
+        height: canv.height,
+        data: canv.getContext('2d').getImageData(0, 0, canv.width, canv.height).data
+      }
+    }
+
     objectPts = _objectsPoints(
-        canv,
+        imgData,
         opt.colors,
         opt.accuracy,
         opt.tolerance
@@ -100,11 +109,10 @@ function _pointInObject(ptColor, options) {
 }
 
 // (HTMLCanvasElement, Array, Number, Number) -> Array
-function _objectsPoints(canvas, colors, accuracy, tolerance) {
+function _objectsPoints(imgData, colors, accuracy, tolerance) {
     var result = [],
-        ctx = canvas.getContext('2d'),
-        imgSize = { w: canvas.width, h: canvas.height },
-        imgCols = ctx.getImageData(0, 0, imgSize.w, imgSize.h).data;
+        imgSize = { w: imgData.width, h: imgData.height },
+        imgCols = imgData.data;
 
     for (var i = 0; i < imgCols.length; i += (4 * accuracy)) { // 4 - rgba
         var ptCol = [
