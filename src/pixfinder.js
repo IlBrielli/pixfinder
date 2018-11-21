@@ -59,7 +59,7 @@ function find(options) {
 // (Object) -> Array
 function findAll(options) {
     var opt = _default(options),
-        imgData = options.imageData
+        imgData = options.imageData,
         objectPts, objects;
 
     if (!imgData) {
